@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Description: FOREIGN AID BY UNITED STATE OF AMERICA</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px;
+      background-color: #f7f9fa;
+      color: #222;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    } 
+    h1, h2 {
+      color: #1a5276;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .section {
+      margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+  <h1>US Foreign Aid Visualization: Project Report</h1>
+
+  <div class="section">
+    <h2>1. Dataset Description</h2>
+    <p>
+      The dataset, <strong>US_FOREIGN_BUDGET_COMPLETE</strong>, contains detailed records of foreign aid provided by the United States to countries around the world. The dataset is available at this link: <a href="https://s3.amazonaws.com/files.explorer.devtechlab.com/us_foreign_budget_complete.csv">US Foreign Assistance</a>.
+      I downloaded it from here and used it for this project. Each row represents a funding record for a specific country, year, and category.
+      The main columns are:
+    </p>
+    <ul>
+      <li><strong>Country Name</strong>: The recipient country of the aid.</li>
+      <li><strong>Region Name</strong>: The geographical region of the country.</li>
+      <li><strong>Income Group Name</strong>: The World Bank income classification of the country (e.g., Low Income, Upper Middle Income).</li>
+      <li><strong>Fiscal Year</strong>: The year the aid was allocated.</li>
+      <li><strong>current_amount</strong>: The amount of aid (in USD) provided.</li>
+      <li><strong>US Category Name</strong>: The sector or purpose of the aid (e.g., Health, Economic Development).</li>
+    </ul>
+    <p>The dataset is cleaned to include only valid, non-zero funding records with specified countries and income groups.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. Questions the Visualization is Designed to Answer</h2>
+    <ul>
+      <li>How is US foreign aid distributed across different regions and countries?</li>
+      <li>What are the main sectors (categories) for which aid is provided?</li>
+      <li>How does aid distribution vary by country income group?</li>
+      <li>What is the flow of funding from sectors to regions and countries?</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Visualization Design and Evolution</h2>
+    <h3>Visualizations Created</h3>
+    <ul>
+      <li><strong>World Map</strong>: Shows the distribution of aid by country and region.</li>
+      <li><strong>Treemap</strong>: Displays funding by country, color-coded by income group.</li>
+      <li><strong>Sankey Diagram</strong>: Illustrates the flow of funding from sectors to regions and countries.</li>
+    </ul>
+    <h3>Design Evolution</h3>
+    <ul>
+      <li><strong>Initial Design</strong>: Started with a simple map and bar chart to show country-level funding.</li>
+      <li><strong>Improvements</strong>: Replaced the bar chart with a treemap for better use of space and to encode income group via color. Added a Sankey diagram to visualize the flow of funds from sectors to regions and countries, providing a more holistic view.</li>
+      <li><strong>Interactivity</strong>: Added filtering by year, search functionality, and interactive highlighting to allow users to focus on specific countries or categories.</li>
+    </ul>
+    <h3>Marks and Channels</h3>
+    <ul>
+      <li><strong>World Map</strong>: Uses geographic regions (marks: country shapes), color (channel: region), and tooltips for details.</li>
+      <li><strong>Treemap</strong>: Uses rectangles sized by funding amount (mark: area), color-coded by income group (channel: color).</li>
+      <li><strong>Sankey Diagram</strong>: Uses nodes (marks: rectangles) and links (marks: paths) to show flow, with width encoding funding amount (channel: size).</li>
+      <li><strong>Other Channels</strong>: Tooltips, hover highlights, and clickable elements for interaction.</li>
+    </ul>
+    <h3>Techniques Used</h3>
+    <ul>
+      <li><strong>D3.js</strong>: For all data-driven visualizations and DOM manipulation.</li>
+      <li><strong>TopoJSON</strong>: For efficient map rendering.</li>
+      <li><strong>Data Filtering and Aggregation</strong>: For year selection, country/category grouping, and income group classification.</li>
+      <li><strong>Color Palettes</strong>: Carefully chosen for accessibility and clarity.</li>
+      <li><strong>Responsive Design</strong>: Layout adapts to different screen sizes.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4. How the Visualization Answers the Questions</h2>
+    <ul>
+      <li><strong>Aid Distribution by Region/Country</strong>: The world map provides an immediate visual overview, with color and tooltips revealing regional and country-level details.</li>
+      <li><strong>Main Sectors for Aid</strong>: The Sankey diagram's leftmost nodes represent sectors, showing which categories receive the most funding and how funds flow to regions and countries.</li>
+      <li><strong>Variation by Income Group</strong>: The treemap encodes income group by color, making it easy to compare funding across different economic classifications.</li>
+      <li><strong>Funding Flow</strong>: The Sankey diagram visually traces the path of funds from sector to region to country, making complex relationships easy to follow.</li>
+      <li><strong>Temporal Analysis</strong>: The year filter allows users to see how patterns change over time, supporting trend analysis.</li>
+      <li><strong>Search and Focus</strong>: The search bar and interactive highlights let users quickly find and focus on specific countries or categories, supporting both overview and detail-on-demand.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Project Visuals</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 24px;">
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/1.png" alt="Visual 1" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">zoomable world map</div>
+      </div>
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/2.png" alt="Visual 2" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">World Map with regions shaded and countries circled size based on funding amount</div>
+      </div>
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/5.png" alt="Visual 3" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">Dynamic Sankey Diagram: Trace the journey of US foreign aid from the total budget, through eight key sectors, across seven regions, and down to individual countries.</div>
+      </div>
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/6.png" alt="Visual 4" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">Income-Based Treemap: Instantly compare countries by income group and funding rank, with color and size revealing economic status and aid received.</div>
+      </div>
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/7.png" alt="Visual 5" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">Comprehensive Treemap View: Dive deep into the details of each income category and see the distribution of US aid at a glance.</div>
+      </div>
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/8.png" alt="Visual 6" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">Sector Breakdown: Explore how a single country's funding is distributed across multiple sectors for targeted impact analysis.</div>
+      </div>
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/9.png" alt="Visual 7" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">Sankey Insights: Instantly spot which sectors and regions are the biggest beneficiaries of US foreign aid flows.</div>
+      </div>
+      <div style="flex: 1 1 45%; max-width: 45%; margin-bottom: 24px; text-align: center;">
+        <img src="screenshots/10.png" alt="Visual 8" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+        <div class="caption">Regional Sector Analysis: Drill down to see how each country within a region receives funding across different sectors.</div>
+      </div>
+    </div>
+    <div style="width: 100%; margin-bottom: 24px; text-align: center;">
+      <img src="screenshots/4.png" alt="Visual 9" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;">
+      <div class="caption">Country-Focused Dashboard: Instantly reveal a selected country's sector-wise funding profile for a complete, actionable overview.</div>
+    </div>
+  </div>
+</body>
+</html>

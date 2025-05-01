@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>US Foreign Aid - Treemap Visualization</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      color: #1a5276;
+      margin-bottom: 10px;
+    }
+    
+    .controls {
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    label {
+      font-weight: 600;
+      color: #555;
+    }
+    
+    select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .treemap-container {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      height: 700px;
+    }
+    
+    .info-panel {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .tooltip {
+      position: absolute;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      border-radius: 4px;
+      pointer-events: none;
+      font-size: 12px;
+      z-index: 1000;
+      max-width: 300px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .node {
+      stroke: #fff;
+      stroke-width: 1px;
+      transition: opacity 0.3s, stroke-width 0.3s;
+      cursor: pointer;
+    }
+    
+    .node:hover {
+      stroke-width: 3px;
+      stroke: #000;
+    }
+    
+    .node.highlighted {
+      stroke: #000;
+      stroke-width: 3px;
+      stroke-dasharray: 5,2;
+    }
+    
+    .node-label {
+      font-size: 10px;
+      pointer-events: none;
+      text-anchor: middle;
+      fill: white;
+      text-shadow: 0px 0px 2px rgba(0,0,0,0.7);
+    }
+    
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .legend-color {
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
+      border: 1px solid #ddd;
+    }
+    
+    .highlight-mode {
+      background-color: #f2f2f2;
+      padding: 5px 10px;
+      border-radius: 4px;
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>US Foreign Aid - Treemap by Country</h1>
+    
+    <div class="controls">
+      <div>
+        <label for="year-select">Fiscal Year:</label>
+        <select id="year-select">
+          <option value="all">All Years</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="legend" id="legend">
+    </div>
+    
+    <div class="treemap-container" id="treemap"></div>
+  </div>
+  
+  <script>
+    // Global variables
+    let activeData = [];
+    let highlightedCountry = null;
+    
+    const incomeColors = {
+      "Low Income Country": "#1f77b4",
+      "Lower Middle Income Country": "#2ca02c",
+      "Upper Middle Income Country": "#ff7f0e",
+      "High Income Country": "#d62728"
+    };
+    
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+    
+    function createTreemap(data) {
+      console.log("Creating treemap with", data ? data.length : 0, "records");
+      
+      d3.select("#treemap").html("");
+      
+      if (!data || data.length === 0) {
+        console.warn("No data provided to createTreemap");
+        d3.select("#treemap").html("<p style='color: red; padding: 20px;'>No valid data to display</p>");
+        return;
+      }
+      
+      try {
+        const hierarchyData = prepareCountryData(data);
+        
+        const width = document.getElementById("treemap").clientWidth;
+        const height = document.getElementById("treemap").clientHeight;
+        
+        const treemap = d3.treemap()
+          .size([width, height])
+          .paddingOuter(3)
+          .paddingTop(0) 
+          .paddingInner(2)
+          .round(true);
+        
+        treemap(hierarchyData);
+        
+        const svg = d3.select("#treemap")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height);
+        
+        const nodes = svg.selectAll("g")
+          .data(hierarchyData.descendants().filter(d => d.depth === 1)) // Only get country nodes (depth 1)
+          .join("g")
+          .attr("transform", d => `translate(${d.x0},${d.y0})`);
+        
+        nodes.append("rect")
+          .attr("class", d => `node country ${highlightedCountry === d.data.name ? 'highlighted' : ''}`)
+          .attr("width", d => d.x1 - d.x0)
+          .attr("height", d => d.y1 - d.y0)
+          .attr("fill", d => incomeColors[d.data.incomeGroup] || "#999") // Color by income group
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 1)
+          .on("mouseover", function(event, d) {
+            d3.select(this)
+              .attr("stroke", "#000")
+              .attr("stroke-width", 3);
+            
+            const tooltipContent = `<strong>Country:</strong> ${d.data.name}<br>
+              <strong>Region:</strong> ${d.data.region || "Unknown"}<br>
+              <strong>Income Group:</strong> ${d.data.incomeGroup}<br>
+              <strong>Total Amount:</strong> $${d3.format(",")(Math.round(d.value))}`;
+            
+            tooltip.transition()
+              .duration(200)
+              .style("opacity", 0.9);
+            
+            tooltip.html(tooltipContent)
+              .style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function() {
+            // Remove hover effects
+            d3.select(this)
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 1);
+            
+            tooltip.transition()
+              .duration(500)
+              .style("opacity", 0);
+          })
+          .on("click", function(event, d) {
+            if (highlightedCountry === d.data.name) {
+              highlightedCountry = null;
+            } else {
+              highlightedCountry = d.data.name;
+            }
+            
+            createTreemap(activeData);
+          });
+        
+        nodes.append("text")
+          .attr("class", "node-label")
+          .attr("x", d => (d.x1 - d.x0) / 2)
+          .attr("y", d => (d.y1 - d.y0) / 2)
+          .attr("dy", "0.35em")
+          .attr("text-anchor", "middle")
+          .attr("font-size", "10px")
+          .attr("fill", "white")
+          .attr("text-shadow", "0px 0px 2px rgba(0,0,0,0.7)")
+          .text(d => {
+            const width = d.x1 - d.x0;
+            const height = d.y1 - d.y0;
+            
+            if (width > 40 && height > 25) {
+              return d.data.name;
+            }
+            return "";
+          });
+        
+        updateLegend();
+        
+      } catch (error) {
+        console.error("Error creating treemap:", error);
+        d3.select("#treemap").html(`<p style='color: red; padding: 20px;'>Error creating treemap: ${error.message}</p>`);
+      }
+    }
+    
+    function prepareCountryData(data) {
+      const countryMap = d3.group(data, d => d["Country Name"]);
+      
+      const rootData = { name: "World", children: [] };
+      
+      countryMap.forEach((entries, country) => {
+        const total = d3.sum(entries, d => +d.current_amount);
+        
+        if (!total || isNaN(total) || total <= 0) return;
+        
+        const regionCounts = new Map();
+        const incomeGroupCounts = new Map();
+        
+        entries.forEach(entry => {
+          const region = entry["Region Name"] || "Unspecified";
+          const group = entry["Income Group Name"];
+          
+          if (!group || group === "Unspecified") return;
+          
+          regionCounts.set(region, (regionCounts.get(region) || 0) + 1);
+          incomeGroupCounts.set(group, (incomeGroupCounts.get(group) || 0) + 1);
+        });
+        
+        if (incomeGroupCounts.size === 0) return;
+        
+        const region = Array.from(regionCounts.entries())
+          .sort((a, b) => b[1] - a[1])[0][0]; 
+        
+        const incomeGroup = Array.from(incomeGroupCounts.entries())
+          .sort((a, b) => b[1] - a[1])[0][0]; 
+        
+        if (!incomeColors[incomeGroup]) return;
+        
+        rootData.children.push({
+          name: country,
+          value: total,
+          region: region,
+          incomeGroup: incomeGroup
+        });
+      });
+      
+      rootData.children.sort((a, b) => b.value - a.value);
+      
+      return d3.hierarchy(rootData)
+        .sum(d => d.value);
+    }
+    
+    function updateLegend() {
+      const legendContainer = d3.select("#legend");
+      legendContainer.html("");
+      
+      const legendData = Object.entries(incomeColors);
+      
+      const centerContainer = legendContainer.append("div")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("margin-bottom", "15px");
+      
+      legendData.forEach(([key, color]) => {
+        const item = centerContainer.append("div")
+          .attr("class", "legend-item");
+        
+        item.append("div")
+          .attr("class", "legend-color")
+          .style("background-color", color);
+        
+        item.append("span")
+          .text(key);
+      });
+    }
+    
+    d3.csv("us_foreign_budget_complete.csv").then(data => {
+      data.forEach(d => {
+        d.current_amount = +d.current_amount || 0;
+        d["Fiscal Year"] = +d["Fiscal Year"] || 0;
+      });
+      
+      const filteredData = data.filter(d => 
+        d.current_amount > 0 && 
+        !isNaN(d.current_amount) &&
+        d["Country Name"] && 
+        d["Country Name"].trim() !== "" &&
+        d["Country Name"] !== "World" &&
+        d["Country Name"] !== "Unassigned" &&
+        d["Income Group Name"] && 
+        d["Income Group Name"] !== "Unspecified" &&
+        incomeColors[d["Income Group Name"]]
+      );
+      
+      console.log(`Loaded ${filteredData.length} valid records out of ${data.length} total records`);
+      
+      activeData = filteredData;
+      
+      const years = [...new Set(filteredData.map(d => d["Fiscal Year"]))].sort((a, b) => b - a);
+      
+      const yearSelect = document.getElementById('year-select');
+      
+      years.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      });
+      
+      yearSelect.addEventListener('change', function() {
+        const selectedYear = this.value;
+        
+        if (selectedYear === "all") {
+          activeData = filteredData;
+        } else {
+          activeData = filteredData.filter(d => d["Fiscal Year"] === +selectedYear);
+        }
+        
+        highlightedCountry = null;
+        
+        createTreemap(activeData);
+      });
+      
+      createTreemap(activeData);
+      
+    }).catch(error => {
+      console.error("Error loading data:", error);
+      document.getElementById('treemap').innerHTML = 
+        `<p style="color: red; padding: 20px;">Error loading data: ${error.message}</p>`;
+    });
+  </script>
+</body>
+</html>
