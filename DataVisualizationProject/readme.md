@@ -5,8 +5,11 @@
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/Tanish-04/Graduate-Semester-Projects/DataVisualizationProject
+   git clone https://github.com/Tanish-04/Graduate-Semester-Projects
    cd DataVisualizationProject
+   ```
+   ```bash
+   cd Graduate-Semester-Projects/DataVisualizationProject
    ```
    
 
