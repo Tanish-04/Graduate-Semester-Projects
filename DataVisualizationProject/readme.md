@@ -5,9 +5,10 @@
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/DataVisualizationProject.git
+   git clone https://github.com/Tanish-04/Graduate-Semester-Projects/DataVisualizationProject
    cd DataVisualizationProject
    ```
+   
 
 2. **Start a local server:**
 
@@ -22,3 +23,4 @@
    Go to [http://localhost:8000](http://localhost:8000) in your web browser.
 
 ---
+
