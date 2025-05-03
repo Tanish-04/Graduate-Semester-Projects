@@ -31,72 +31,97 @@
   <div class="section">
     <h2>1. Dataset Description</h2>
     <p>
-      The dataset, <strong>US_FOREIGN_BUDGET_COMPLETE</strong>, contains detailed records of foreign aid provided by the United States to countries around the world. The dataset is available at this link: <a href="https://s3.amazonaws.com/files.explorer.devtechlab.com/us_foreign_budget_complete.csv">US Foreign Assistance</a>.
-      I downloaded it from here and used it for this project. Each row represents a funding record for a specific country, year, and category.
-      The main columns are:
+      The dataset, <strong>US_FOREIGN_BUDGET_COMPLETE</strong>, is a comprehensive record of foreign aid provided by the United States to countries around the world. Sourced from <a href="https://s3.amazonaws.com/files.explorer.devtechlab.com/us_foreign_budget_complete.csv">US Foreign Assistance</a>, this dataset is publicly available and is regularly updated to reflect the latest allocations. Each row in the dataset represents a unique funding record, capturing the details of aid disbursement for a specific country, fiscal year, and sector.
+    </p>
+    <p>
+      <strong>Key columns include:</strong>
     </p>
     <ul>
-      <li><strong>Country Name</strong>: The recipient country of the aid.</li>
-      <li><strong>Region Name</strong>: The geographical region of the country.</li>
-      <li><strong>Income Group Name</strong>: The World Bank income classification of the country (e.g., Low Income, Upper Middle Income).</li>
-      <li><strong>Fiscal Year</strong>: The year the aid was allocated.</li>
-      <li><strong>current_amount</strong>: The amount of aid (in USD) provided.</li>
-      <li><strong>US Category Name</strong>: The sector or purpose of the aid (e.g., Health, Economic Development).</li>
+      <li><strong>Country Name</strong>: The recipient country of the aid, allowing for country-level analysis and comparison.</li>
+      <li><strong>Region Name</strong>: The geographical region to which the country belongs, enabling regional aggregation and insights.</li>
+      <li><strong>Income Group Name</strong>: The World Bank income classification (e.g., Low Income, Upper Middle Income), which is crucial for understanding how aid is distributed across different economic strata.</li>
+      <li><strong>Fiscal Year</strong>: The year the aid was allocated, supporting temporal analysis and trend identification.</li>
+      <li><strong>current_amount</strong>: The amount of aid (in USD) provided, which is the primary quantitative measure for all visualizations.</li>
+      <li><strong>US Category Name</strong>: The sector or purpose of the aid (e.g., Health, Economic Development), allowing for sectoral breakdowns and flow analysis.</li>
     </ul>
-    <p>The dataset is cleaned to include only valid, non-zero funding records with specified countries and income groups.</p>
+    <p>
+      <strong>Data Preprocessing:</strong> To ensure the quality and relevance of the analysis, the dataset was cleaned to remove records with missing or zero funding, unspecified countries, or ambiguous income group classifications. Only valid, non-zero funding records with specified countries and income groups are visualized. This preprocessing step is essential for producing accurate and meaningful visualizations.
+    </p>
+    <p>
+      <strong>Limitations:</strong> While the dataset is extensive, it may not capture all forms of aid, especially those not reported through official channels. Some countries or regions may have incomplete data for certain years, and the classification of aid categories and income groups may change over time. Users should be aware of these limitations when interpreting the results.
+    </p>
   </div>
 
   <div class="section">
     <h2>2. Questions the Visualization is Designed to Answer</h2>
+    <p>
+      The visualizations in this project are designed to address a range of analytical questions that are central to understanding the landscape of US foreign aid. By providing both high-level overviews and detailed breakdowns, the dashboard supports a variety of user needs, from policy analysis to academic research.
+    </p>
     <ul>
-      <li>How is US foreign aid distributed across different regions and countries?</li>
-      <li>What are the main sectors (categories) for which aid is provided?</li>
-      <li>How does aid distribution vary by country income group?</li>
-      <li>What is the flow of funding from sectors to regions and countries?</li>
+      <li><strong>How is US foreign aid distributed across different regions and countries?</strong> The dashboard enables users to see which regions and countries are the primary recipients of US aid, highlighting geographic disparities and concentrations.</li>
+      <li><strong>What are the main sectors (categories) for which aid is provided?</strong> By breaking down aid by sector, users can identify the US government's strategic priorities and see which areas (e.g., health, education, economic development) receive the most support.</li>
+      <li><strong>How does aid distribution vary by country income group?</strong> The inclusion of income group data allows for analysis of whether aid is targeted toward lower-income countries or distributed more broadly.</li>
+      <li><strong>What is the flow of funding from sectors to regions and countries?</strong> The Sankey diagram and other flow visualizations make it possible to trace the path of aid from its source (sector) through intermediate nodes (regions) to its final destination (countries).</li>
+      <li><strong>How do these patterns change over time (by fiscal year)?</strong> The dashboard's year filter supports temporal analysis, enabling users to track changes in aid allocation and identify trends or shifts in policy focus.</li>
     </ul>
+    <p>
+      These questions are relevant for a wide range of stakeholders, including policymakers, researchers, journalists, and the general public. By making the data accessible and interactive, the project aims to foster greater transparency and understanding of US foreign aid.
+    </p>
   </div>
 
   <div class="section">
     <h2>3. Visualization Design and Evolution</h2>
     <h3>Visualizations Created</h3>
+    <p>
+      The dashboard features a suite of interactive visualizations, each tailored to answer specific analytical questions:
+    </p>
     <ul>
-      <li><strong>World Map</strong>: Shows the distribution of aid by country and region.</li>
-      <li><strong>Treemap</strong>: Displays funding by country, color-coded by income group.</li>
-      <li><strong>Sankey Diagram</strong>: Illustrates the flow of funding from sectors to regions and countries.</li>
+      <li><strong>World Map</strong>: This map provides a global overview of aid distribution, with countries shaded or circled based on the amount of funding received. Users can quickly identify hotspots and outliers, and tooltips provide additional context on hover.</li>
+      <li><strong>Treemap</strong>: The treemap encodes both the amount of funding (via area) and the income group (via color), allowing for rapid comparison across countries and economic classifications. The hierarchical structure makes it easy to spot the largest recipients and see how aid is distributed within and across income groups.</li>
+      <li><strong>Sankey Diagram</strong>: The Sankey diagram visualizes the flow of funds from the total budget, through major sectors, into regions, and finally to individual countries. This flow-based view is invaluable for understanding the complexity of aid allocation and for tracing the impact of funding decisions.</li>
     </ul>
     <h3>Design Evolution</h3>
+    <p>
+      The design of the dashboard evolved through several iterations, guided by user feedback and exploratory data analysis. The initial version featured a simple map and bar chart, which provided a basic overview but lacked the depth and flexibility needed for comprehensive analysis. Subsequent versions introduced the treemap and Sankey diagram, which added new dimensions of insight and interactivity.
+    </p>
     <ul>
-      <li><strong>Initial Design</strong>: Started with a simple map and bar chart to show country-level funding.</li>
-      <li><strong>Improvements</strong>: Replaced the bar chart with a treemap for better use of space and to encode income group via color. Added a Sankey diagram to visualize the flow of funds from sectors to regions and countries, providing a more holistic view.</li>
-      <li><strong>Interactivity</strong>: Added filtering by year, search functionality, and interactive highlighting to allow users to focus on specific countries or categories.</li>
+      <li><strong>Initial Design</strong>: The project began with a focus on geographic distribution, using a world map and bar chart to show country-level funding. While informative, this approach was limited in its ability to convey relationships between sectors, regions, and countries.</li>
+      <li><strong>Improvements</strong>: The bar chart was replaced with a treemap, which makes more efficient use of space and encodes additional information through color and area. The Sankey diagram was added to visualize the flow of funds, providing a holistic view of the aid ecosystem.</li>
+      <li><strong>Interactivity</strong>: User-driven features such as year filtering, search functionality, and interactive highlighting were incorporated to enhance the user experience and support deeper exploration of the data.</li>
     </ul>
     <h3>Marks and Channels</h3>
     <ul>
-      <li><strong>World Map</strong>: Uses geographic regions (marks: country shapes), color (channel: region), and tooltips for details.</li>
-      <li><strong>Treemap</strong>: Uses rectangles sized by funding amount (mark: area), color-coded by income group (channel: color).</li>
-      <li><strong>Sankey Diagram</strong>: Uses nodes (marks: rectangles) and links (marks: paths) to show flow, with width encoding funding amount (channel: size).</li>
-      <li><strong>Other Channels</strong>: Tooltips, hover highlights, and clickable elements for interaction.</li>
+      <li><strong>World Map</strong>: Uses geographic regions (marks: country shapes), color (channel: region), and tooltips for details. The map is interactive, allowing users to click or hover to see more information and focus on specific countries or regions.</li>
+      <li><strong>Treemap</strong>: Uses rectangles sized by funding amount (mark: area), color-coded by income group (channel: color). Tooltips and highlights provide detail-on-demand, and the hierarchical layout supports both overview and drill-down analysis.</li>
+      <li><strong>Sankey Diagram</strong>: Uses nodes (marks: rectangles) and links (marks: paths) to show flow, with width encoding funding amount (channel: size). The diagram is interactive, supporting exploration of specific flows and highlighting of key paths.</li>
+      <li><strong>Other Channels</strong>: Tooltips, hover highlights, and clickable elements for interaction. Color palettes are chosen for accessibility and clarity, and the layout is responsive to different screen sizes.</li>
     </ul>
     <h3>Techniques Used</h3>
     <ul>
-      <li><strong>D3.js</strong>: For all data-driven visualizations and DOM manipulation.</li>
-      <li><strong>TopoJSON</strong>: For efficient map rendering.</li>
-      <li><strong>Data Filtering and Aggregation</strong>: For year selection, country/category grouping, and income group classification.</li>
-      <li><strong>Color Palettes</strong>: Carefully chosen for accessibility and clarity.</li>
-      <li><strong>Responsive Design</strong>: Layout adapts to different screen sizes.</li>
+      <li><strong>D3.js</strong>: The dashboard is built using D3.js, a powerful JavaScript library for data-driven visualizations. D3 enables flexible, interactive, and highly customizable graphics.</li>
+      <li><strong>TopoJSON</strong>: TopoJSON is used for efficient map rendering, reducing file size and improving performance compared to standard GeoJSON.</li>
+      <li><strong>Data Filtering and Aggregation</strong>: All filtering and aggregation are performed client-side, allowing for fast, responsive updates as users interact with the dashboard.</li>
+      <li><strong>Color Palettes</strong>: Carefully selected color palettes ensure that the visualizations are both aesthetically pleasing and accessible to users with color vision deficiencies.</li>
+      <li><strong>Responsive Design</strong>: The dashboard layout adapts to different screen sizes and devices, ensuring a consistent user experience across platforms.</li>
     </ul>
   </div>
 
   <div class="section">
     <h2>4. How the Visualization Answers the Questions</h2>
+    <p>
+      The interactive dashboard is designed to empower users to answer the core analytical questions outlined above. Each visualization plays a specific role in the analytical process, and together they provide a comprehensive view of US foreign aid distribution.
+    </p>
     <ul>
-      <li><strong>Aid Distribution by Region/Country</strong>: The world map provides an immediate visual overview, with color and tooltips revealing regional and country-level details.</li>
-      <li><strong>Main Sectors for Aid</strong>: The Sankey diagram's leftmost nodes represent sectors, showing which categories receive the most funding and how funds flow to regions and countries.</li>
-      <li><strong>Variation by Income Group</strong>: The treemap encodes income group by color, making it easy to compare funding across different economic classifications.</li>
-      <li><strong>Funding Flow</strong>: The Sankey diagram visually traces the path of funds from sector to region to country, making complex relationships easy to follow.</li>
-      <li><strong>Temporal Analysis</strong>: The year filter allows users to see how patterns change over time, supporting trend analysis.</li>
-      <li><strong>Search and Focus</strong>: The search bar and interactive highlights let users quickly find and focus on specific countries or categories, supporting both overview and detail-on-demand.</li>
+      <li><strong>Aid Distribution by Region/Country</strong>: The world map offers an immediate visual overview of where US aid is concentrated. Users can hover over or click on countries to see detailed funding information, and the color coding by region helps to reveal geographic patterns and disparities.</li>
+      <li><strong>Main Sectors for Aid</strong>: The Sankey diagram's leftmost nodes represent the major sectors receiving US aid. By following the flow of funds, users can see which sectors are prioritized and how resources are allocated across regions and countries.</li>
+      <li><strong>Variation by Income Group</strong>: The treemap encodes income group by color, making it easy to compare funding across different economic classifications. Users can quickly identify whether low-income or middle-income countries are receiving more aid, and can drill down to individual countries for more detail.</li>
+      <li><strong>Funding Flow</strong>: The Sankey diagram visually traces the path of funds from sector to region to country, making complex relationships easy to follow. This flow-based view is particularly useful for understanding the impact of policy decisions and identifying bottlenecks or inefficiencies in aid distribution.</li>
+      <li><strong>Temporal Analysis</strong>: The year filter allows users to see how patterns change over time, supporting trend analysis and the identification of shifts in policy focus or global priorities.</li>
+      <li><strong>Search and Focus</strong>: The search bar and interactive highlights let users quickly find and focus on specific countries or categories, supporting both overview and detail-on-demand. This feature is especially valuable for researchers or policymakers interested in a particular country or sector.</li>
     </ul>
+    <p>
+      By combining these visualizations and interactive features, the dashboard provides a flexible and powerful tool for exploring the distribution and impact of US foreign aid. Users can move seamlessly from high-level overviews to detailed, country-specific analyses, making the data accessible and actionable for a wide range of audiences.
+    </p>
   </div>
 
   <div class="section">
